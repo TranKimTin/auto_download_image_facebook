@@ -1,3 +1,6 @@
+var max = 100;
+var i=5;
+
 function forceDownload(url){
     var xhr = new XMLHttpRequest();
     xhr.open("GET", url, true);
@@ -15,8 +18,6 @@ function forceDownload(url){
     xhr.send();
 }
 
-var i=5;
-var max = 100;
 function main(){
     setTimeout(() => {
         window.scroll({
