@@ -15,18 +15,27 @@ function forceDownload(url){
     xhr.send();
 }
 
-let i=5;
-setInterval(() => {
-    window.scroll({
-        top: 999999999999999,
-        left: 100,
-        behavior: 'smooth'
-    });
-    let all = document.getElementsByTagName("img");
-    while(i<all.length){
-        forceDownload(all[i].src);
-        console.log(all[i].src);
-        i++;
-        // break;
-    }
-}, 1000);
+var i=5;
+var max = 100;
+function main(){
+    setTimeout(() => {
+        window.scroll({
+            top: 999999999999999,
+            left: 100,
+            behavior: 'smooth'
+        });
+        var all = document.getElementsByTagName("img");
+        while(i<all.length){
+            forceDownload(all[i].src);
+            //console.log(all[i].src);
+            i++;
+            // break;
+        }
+        if(i >= max + 5) {
+            console.log('done');
+            return;
+        }
+        main();
+    }, 1000);
+}
+main();
