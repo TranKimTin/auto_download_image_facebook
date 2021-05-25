@@ -1,14 +1,14 @@
-var max = 100;
+var max = 100; //số lượng ảnh muốn tải
 var i=5;
 
 function forceDownload(url){
-    var xhr = new XMLHttpRequest();
+    let xhr = new XMLHttpRequest();
     xhr.open("GET", url, true);
     xhr.responseType = "blob";
     xhr.onload = function(){
-        var urlCreator = window.URL || window.webkitURL;
-        var imageUrl = urlCreator.createObjectURL(this.response);
-        var tag = document.createElement('a');
+        let urlCreator = window.URL || window.webkitURL;
+        let imageUrl = urlCreator.createObjectURL(this.response);
+        let tag = document.createElement('a');
         tag.href = imageUrl;
         tag.download = 'image';
         document.body.appendChild(tag);
@@ -20,13 +20,8 @@ function forceDownload(url){
 
 function main(){
     setTimeout(() => {
-        window.scroll({
-            top: 999999999999999,
-            left: 100,
-            behavior: 'smooth'
-        });
-        var all = document.getElementsByTagName("img");
-        while(i<all.length){
+        let all = document.getElementsByTagName("img");
+        if(i<all.length){
             forceDownload(all[i].src);
             //console.log(all[i].src);
             i++;
@@ -36,7 +31,14 @@ function main(){
             console.log('done');
             return;
         }
+        if(i >= all.length){
+            window.scroll({
+                top: 999999999999999,
+                left: 100,
+                behavior: 'smooth'
+            });
+        }
         main();
-    }, 1000);
+    }, 150);
 }
 main();
