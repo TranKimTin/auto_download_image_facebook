@@ -1,6 +1,7 @@
-var i = 0;
-var max = 1000;
+var maxYear = 2020;
+var maxMonth = 1;
 var arr = [];
+var list = [];
 
 function download(filename, text) {
     var pom = document.createElement('a');
@@ -62,43 +63,69 @@ function toHTML() {
     `
     return html;
 }
-var list = [];
-var clicked = {};
-function main() {
-    setTimeout(() => {
-        div = document.getElementsByClassName("_52ja _52jh _xtx");
-        window.scroll({
-            top: 999999999999999,
-            left: 100,
-            behavior: 'smooth'
-        });
-        i = 0;
-        while (i < div.length && clicked[div[i].innerText] == 1) {
-            i++;
+
+function getTag(month, year, more) {
+    let id = '';
+    if (month == 12 && more == 0) {
+        id = `year_${year}`
+    } else if (more == 0) {
+        id = `month_${year}_${month}`;
+    }
+    else if (more > 0) {
+        id = `month_${year}_${month}_more_${more}`
+    }
+    let tag = document.getElementById(id);
+    if (tag != null) {
+        tag.scrollIntoView();
+    }
+    return tag;
+}
+
+function click(month, year, more) {
+    return new Promise((resolve, reject) => {
+        let tag = getTag(month, year, more);
+        console.log(`thang ${month}, nam ${year}, trang ${more}`);
+        if (tag == null) return resolve(0);
+        tag.click();
+        if (tag.firstChild != null) {
+            tag.firstChild.click();
         }
-        if (i < div.length && list.length <= max) {
-            console.log(div[i].innerText)
-            clicked[div[i].innerText] = 1;
-            if (i > 0) { div[i - 1].scrollIntoView(); }
-            div[i].scrollIntoView();
-            div[i].click();
-            div[i].scrollIntoView();
-            i++;
-            list = document.getElementsByClassName("_56d4");
-            console.log(list.length)
+        setTimeout(() => {
+            resolve(1);
+        }, 2000);
+    });
+}
+
+async function clickFullMonth(month, year) {
+    let i = 0;
+    while (true) {
+        await click(month, year, i);
+        if (getTag(month, year, i) == null && getTag(month, year, i + 1) == null) return;
+        if (i > 0 && getTag(month, year, i) != null) continue;
+        i++;
+    }
+}
+
+async function getData() {
+    let year = new Date().getFullYear();
+    for (let i = year; i >= maxYear; i--) {
+        for (let j = 12; j >= 1; j--) {
+            if (i < maxYear) return;
+            if (i == maxYear && j < maxMonth) return;
+            await clickFullMonth(j, i);
         }
-        else {
-            list = document.getElementsByClassName("_56d4");
-            console.log(list.length)
-            for (var j = 0; j < list.length; j++) {
-                if (list[j].innerText.trim() != '') {
-                    arr.push(list[j].innerText);
-                }
-            }
-            download(`${getId()}.html`, toHTML());
-            return;
+    }
+}
+
+async function main() {
+    await getData();
+
+    list = document.getElementsByClassName("_56d4");
+    for (var j = 0; j < list.length; j++) {
+        if (list[j].innerText.trim() != '') {
+            arr.push(list[j].innerText);
         }
-        main();
-    }, 1500);
+    }
+    download(`${getId()}.html`, toHTML());
 }
 main();
